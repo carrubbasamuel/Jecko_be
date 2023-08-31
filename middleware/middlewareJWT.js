@@ -8,7 +8,7 @@ const secretKey = crypto.randomBytes(32).toString('base64');
 
 const generateToken = (user) => {
   const token = jwt.sign(user, secretKey, { expiresIn: '1h' });
-  return token;
+  return encodeURI(token);
 };
 
 

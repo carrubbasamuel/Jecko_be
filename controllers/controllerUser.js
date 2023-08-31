@@ -22,7 +22,7 @@ const signup = async (req, res) => {
       surname: req.body.surname,
       phone: req.body.phone,
       birthdate: req.body.birthdate,
-      avatar: req.file.path,
+      avatar: req?.file?.path,
       motto: req.body.motto,
     });
 
@@ -40,21 +40,25 @@ const login = async (req, res) => {
   try {
     const user = await SchemaUser.findOne({ email: req.body.email });
     if (!user) {
-      return res.status(404).json({ message: 'Utente non trovato' });
+      return res.status(404).json({ message: 'Not valid email or password' });
     }
 
     const passwordMatch = await bcrypt.compare(req.body.password, user.password);
     if (!passwordMatch) {
-      return res.status(401).json({ message: 'Password errata' });
+      return res.status(401).json({ message: 'Not valid email or password' });
     }
 
     const token = generateToken({ email: user.email, _id: user._id });
     res.status(200).send(token);
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Errore interno' });
   }
 };
+
+
+
 
 module.exports = {
   signup,

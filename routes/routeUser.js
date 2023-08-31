@@ -5,11 +5,14 @@ const user = express.Router();
 
 
 const userController = require('../controllers/controllerUser');
+const { loginValidation,signupValidation, validationMiddleware } = require('../middleware/middlewareExpressValidator');
+const { verifyToken } = require('../middleware/middlewareJWT');
 
 
 
-user.post('/signup',formDataSingup.single('avatar'), userController.signup);
-user.post('/login', userController.login);
+user.post('/signup',formDataSingup.single('avatar'), signupValidation, validationMiddleware, userController.signup);
+user.post('/login', loginValidation, validationMiddleware, userController.login);
+
 
 
 
