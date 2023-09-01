@@ -58,9 +58,24 @@ const login = async (req, res) => {
 };
 
 
+const profile = async (req, res) => {
+  try {
+    const user = await SchemaUser.findOne({ _id: req.user._id });
+    if (!user) {
+      return res.status(404).json({ message: 'Not found!' });
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Errore interno' });
+  }
+};
+
+
 
 
 module.exports = {
   signup,
   login,
+  profile,
 };

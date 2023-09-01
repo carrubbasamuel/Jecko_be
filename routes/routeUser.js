@@ -13,6 +13,8 @@ const { verifyToken } = require('../middleware/middlewareJWT');
 user.post('/signup',formDataSingup.single('avatar'), signupValidation, validationMiddleware, userController.signup);
 user.post('/login', loginValidation, validationMiddleware, userController.login);
 
+user.get('/profile', verifyToken, userController.profile);
+
 
 
 
