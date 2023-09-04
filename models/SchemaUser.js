@@ -38,7 +38,15 @@ const SchemaUser = mongoose.Schema({
     motto: {
         type: String,
         default: "Ehy, I'm using Jecko!"
-    }
+    },
+    games: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Game'
+    }],
+    createdGames: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Game'
+    }],
 }, { timestamps: true, strict: true });
 
 
