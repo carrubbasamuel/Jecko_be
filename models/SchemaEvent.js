@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const SchemaEvent = mongoose.Schema({
+    title: {
+        type: String,
+        required: true
+    },
     dateStart:{
         type: Date,
         required: true
