@@ -5,28 +5,32 @@ const SchemaEvent = mongoose.Schema({
         type: String,
         required: true
     },
-    dateStart:{
+    dateStart: {
         type: Date,
         required: true
     },
-    dateEnd:{
+    dateEnd: {
         type: Date,
         required: true
     },
-    location:{
+    location: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'SportFildsLocation'
     },
-    players:[{
+    players: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
-    description:{
+    description: {
         type: String
     },
-    creator:{
+    creator: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    },
+    id_room: {
+        type: String,
+        required: true
     }
 }, { timestamps: true, strict: true });
 

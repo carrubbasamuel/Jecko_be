@@ -1,4 +1,6 @@
 const Event = require('../models/SchemaEvent');
+const Message = require('../models/SchemaMessage');
+const { v4: uuidv4 } = require('uuid');
 
 
 const createEvent = async (req, res) => {
@@ -26,12 +28,22 @@ const createEvent = async (req, res) => {
             dateStart: req.body.dateStart,
             dateEnd: req.body.dateEnd,
             location: req.body.location,
-            players: req.body.players,
+            players: req.user._id,
             description: req.body.description,
             creator: req.user._id,
+            id_room: uuidv4(),
         });
-
         const newEvent = await event.save();
+
+        //First message
+        const newMessage = new Message({
+            id_room: newEvent.id_room,
+            sender: req.user._id,
+            message: "Evento creato",
+        });
+        
+        await newMessage.save();
+
         res.status(201).json(newEvent);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -58,12 +70,10 @@ const getEventByLocation = async (req, res) => {
 }
 
 
-
-
-const getEventByCreator = async (req, res) => {
+const delateEvent = async (req, res) => {
     try {
-        const event = await Event.find({ creator: req.params.creatorId });
-        res.status(200).json(event);
+        const event = await Event.findByIdAndDelete(req.params.eventId);
+        res.status(200).send(event);
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
@@ -71,8 +81,49 @@ const getEventByCreator = async (req, res) => {
 
 
 
+
+
+
+const patchJoinEvent = async (req, res) => {
+    try {
+        const event = await Event.findById(req.params.eventId);
+        if (event.players.includes(req.user._id)) {
+            return res.status(400).json({ message: "Sei gia iscritto a questo evento" });
+        }
+        event.players.push(req.user._id);
+        await event.save();
+        res.status(200).json(event);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
+
+//Restituisce tutti gli eventi a cui l'utente è iscritto
+const getOnLoadEventCorrelatedToUser = async (req, res) => {
+    try {
+        const eventTerminated = await Event.find({ dateEnd: { $lte: new Date() } });
+        if (eventTerminated) {
+            eventTerminated.forEach(async (event) => {
+                await Event.findByIdAndDelete(event._id);
+                await Message.deleteMany({ id_room: event.id_room });
+            });
+        }
+
+        const event = await Event.find({ players: req.user._id })
+        res.status(200).send(event);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
+
+
+
 module.exports = {
     createEvent,
     getEventByLocation,
-    getEventByCreator
+    delateEvent,
+    patchJoinEvent,
+    getOnLoadEventCorrelatedToUser,
 }

@@ -61,10 +61,10 @@ const login = async (req, res) => {
 const profile = async (req, res) => {
   try {
     const user = await SchemaUser.findOne({ _id: req.user._id })
-    .select('username name surname birthdate avatar motto')
+    .select('-_id username name surname birthdate avatar motto')
     if (!user) {
       return res.status(404).json({ message: 'Not found!' });
-    }
+    }  
     res.status(200).json(user);
   } catch (err) {
     console.error(err);
