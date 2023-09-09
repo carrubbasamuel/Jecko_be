@@ -23,6 +23,11 @@ const SchemaLocation = mongoose.Schema({
         type: String,
         required: true
     },
+    cover: {
+        type: String,
+        default: "https://media.istockphoto.com/id/1266312623/id/vektor/lapangan-basket-di-taman-kota.jpg?s=170667a&w=0&k=20&c=0wR7FnT84EfggbuBXfzBz_GjExwUpXszAr5rJ7nHs5M=",
+        required: true
+    }
 }, { timestamps: true, strict: true });
 
 

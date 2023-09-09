@@ -15,6 +15,14 @@ const signupValidation = [
     check('birthdate').notEmpty().withMessage('Birthdate is required'),
 ]
 
+const eventValidation = [
+    check('title').notEmpty().withMessage('Title is required'),
+    check('dateStart').notEmpty().withMessage('Date start is required'),
+    check('dateEnd').notEmpty().withMessage('Date end is required'),
+    check('location').notEmpty().withMessage('Location is required'),
+    check('description').notEmpty().withMessage('Description is required'),
+]
+
 
 const validationMiddleware = (req, res, next) => {
     const errors = validationResult(req);
@@ -27,5 +35,6 @@ const validationMiddleware = (req, res, next) => {
 module.exports = {
     loginValidation,
     signupValidation,
+    eventValidation,
     validationMiddleware
 }

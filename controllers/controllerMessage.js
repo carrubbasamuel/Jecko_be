@@ -20,11 +20,16 @@ const createMessage =  async (req, res) => {
 
 const getMessageByRoomId = async (req, res) => {
     try {
-        const allPrecedentMessage = await Message.find({ id_room: req.params.id_room }).exec();
+        const allPrecedentMessage = await Message.find({ id_room: req.params.id_room })
+            .populate({
+                path: 'sender',
+                select: 'username avatar',
+            })
+            .exec();
 
         if (allPrecedentMessage) {
             const messagesWithIsMine = allPrecedentMessage.map(message => {
-                const isMine = message.sender.toString() === req.user._id.toString();
+                const isMine = message.sender._id.toString() === req.user._id.toString();
                 return { ...message.toObject(), isMine };
             });
 
@@ -36,6 +41,7 @@ const getMessageByRoomId = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
 
 
 

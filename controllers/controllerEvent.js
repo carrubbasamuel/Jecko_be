@@ -62,12 +62,27 @@ const getEventByLocation = async (req, res) => {
             });
         }
 
-        const event = await Event.find({ location: req.params.locationId });
-        res.status(200).send(event);
+        const events = await Event.find({ location: req.params.locationId })
+            .populate({
+                path: 'creator',
+                select: 'username avatar',
+            });
+
+        if (events) {
+            const eventsWithIsCreator = events.map((event) => {
+                return {
+                    ...event.toObject(),
+                    isMine: req.user._id.toString() === event.creator._id.toString(),
+                };
+            });
+
+            res.status(200).send(eventsWithIsCreator);
+        }
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
 }
+
 
 
 const delateEvent = async (req, res) => {
@@ -99,7 +114,7 @@ const patchJoinEvent = async (req, res) => {
 }
 
 
-//Restituisce tutti gli eventi a cui l'utente è iscritto
+
 const getOnLoadEventCorrelatedToUser = async (req, res) => {
     try {
         const eventTerminated = await Event.find({ dateEnd: { $lte: new Date() } });
@@ -111,6 +126,10 @@ const getOnLoadEventCorrelatedToUser = async (req, res) => {
         }
 
         const event = await Event.find({ players: req.user._id })
+            .populate({
+                path: 'location',
+                select: '-_id cover'
+            })
         res.status(200).send(event);
     } catch (error) {
         res.status(404).json({ message: error.message });
