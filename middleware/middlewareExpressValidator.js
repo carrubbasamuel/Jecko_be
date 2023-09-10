@@ -1,26 +1,25 @@
 const { validationResult, check } = require('express-validator');
 
 const loginValidation = [
-    check('email').isEmail().withMessage('Email is required'),
-    check('password').notEmpty().withMessage('Password is required'),
+    check('email').isEmail().withMessage('Inserisci una email'),
+    check('password').notEmpty().withMessage('Inserisci una password'),
 ]
 
 const signupValidation = [
-    check('email').isEmail().withMessage('Not valid email'),
-    check('password').notEmpty().withMessage('Password is required').isLength({ min: 6 }).withMessage('Not valid password (min 6 char)'),
-    check('username').notEmpty().withMessage('Username is required'),
-    check('name').notEmpty().withMessage('Name is required'),
-    check('surname').notEmpty().withMessage('Surname is required'),
-    check('phone').notEmpty().withMessage('Phone is required'),
-    check('birthdate').notEmpty().withMessage('Birthdate is required'),
+    check('email').isEmail().withMessage('Email non valida'),
+    check('password').notEmpty().withMessage('Inserisci una Password').isLength({ min: 6 }).withMessage('Numero minimo di caratteri 6'),
+    check('username').notEmpty().withMessage('Inserisci un username').isLength({ min: 3 }).withMessage('Numero minimo di caratteri 3'),
+    check('name').notEmpty().withMessage('Inserisci un nome'),
+    check('surname').notEmpty().withMessage('Inserisci un cognome'),
+    check('phone').notEmpty().withMessage('Inserisci un numero di telefono'),
+    check('birthdate').notEmpty().withMessage('Inserisci una data di nascita'),
 ]
 
 const eventValidation = [
-    check('title').notEmpty().withMessage('Title is required'),
-    check('dateStart').notEmpty().withMessage('Date start is required'),
-    check('dateEnd').notEmpty().withMessage('Date end is required'),
-    check('location').notEmpty().withMessage('Location is required'),
-    check('description').notEmpty().withMessage('Description is required'),
+    check('title').notEmpty().withMessage('Inserisci un titolo'),
+    check('dateStart').notEmpty().withMessage('Inserisci una data di inizio'),
+    check('dateEnd').notEmpty().withMessage('Inserisci una data di fine'),
+    check('description').notEmpty().withMessage('Inserisci una descrizione'),
 ]
 
 

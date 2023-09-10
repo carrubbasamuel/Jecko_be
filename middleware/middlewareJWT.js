@@ -24,9 +24,22 @@ const verifyToken = (req, res, next) => {
   });
 };
 
+const getIdByTokenForSocket = (token) => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, secretKey, (err, decoded) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(decoded._id);
+      }
+    });
+  });
+};
+
 
 
 module.exports = {
   generateToken,
   verifyToken,
+  getIdByTokenForSocket,
 };

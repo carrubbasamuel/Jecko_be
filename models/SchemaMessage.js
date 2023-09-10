@@ -14,9 +14,13 @@ const SchemaMessage = new mongoose.Schema({
         type: String,
         required: true,
     },
-    date: {
-        type: Date,
-        default: Date.now(),
+    read: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    }],
+    isJoinMessage: {
+        type: Boolean,
+        default: false,
     },
 }, { timestamps: true, strict: true });
 

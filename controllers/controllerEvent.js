@@ -3,6 +3,8 @@ const Message = require('../models/SchemaMessage');
 const { v4: uuidv4 } = require('uuid');
 
 
+
+//Crea un nuovo evento controlla se la data di inizio non collide con un evento gia esistente e se la data di inizio non è precedente alla data attuale
 const createEvent = async (req, res) => {
     const newEventStart = req.body.dateStart;
 
@@ -16,13 +18,12 @@ const createEvent = async (req, res) => {
         if (overlappingEvent) {
             const currentTime = new Date();
             if (overlappingEvent.dateStart <= currentTime) {
-                return res.status(400).json({ message: "Un evento è gia in corso in questa fascia oraria. Inserisci un'altra fascia oraria."});
+                return res.status(403).json({ message: "Un evento è gia in corso in questa fascia oraria. Inserisci un'altra fascia oraria." });
             } else {
-                return res.status(400).json({ message: "La data di inizio del nuovo evento collide con un evento esistente. vuoi partecipare ?", existingEvent: overlappingEvent });
+                return res.status(403).json({ message: "La data di inizio del nuovo evento collide con un evento esistente. Inserisci un'altra data di inizio." });
             }
         }
 
-        
         const event = new Event({
             title: req.body.title,
             dateStart: req.body.dateStart,
@@ -35,13 +36,14 @@ const createEvent = async (req, res) => {
         });
         const newEvent = await event.save();
 
-        //First message
+        //Crea un messaggio che notifica la creazione dell'evento il primo messaggio della room chat
         const newMessage = new Message({
             id_room: newEvent.id_room,
             sender: req.user._id,
-            message: "Evento creato",
+            message: `L'utente ${req.user.username} ha creato l'evento`,
+            read: req.user._id,
         });
-        
+
         await newMessage.save();
 
         res.status(201).json(newEvent);
@@ -52,7 +54,7 @@ const createEvent = async (req, res) => {
 
 
 
-
+//Ritorna tutti gli eventi in base alla location aggiunge un campo isMine che indica se l'utente loggato è il creatore dell'evento
 const getEventByLocation = async (req, res) => {
     try {
         const eventTerminated = await Event.find({ dateEnd: { $lte: new Date() } });
@@ -84,7 +86,7 @@ const getEventByLocation = async (req, res) => {
 }
 
 
-
+//Elimina un evento
 const delateEvent = async (req, res) => {
     try {
         const event = await Event.findByIdAndDelete(req.params.eventId);
@@ -96,9 +98,7 @@ const delateEvent = async (req, res) => {
 
 
 
-
-
-
+//Aggiunge un utente all'evento controlla se l'utente è gia iscritto all'evento
 const patchJoinEvent = async (req, res) => {
     try {
         const event = await Event.findById(req.params.eventId);
@@ -107,6 +107,17 @@ const patchJoinEvent = async (req, res) => {
         }
         event.players.push(req.user._id);
         await event.save();
+
+        const newMessage = new Message({
+            id_room: event.id_room,
+            sender: req.user._id,
+            message: `L'utente ${req.user.username} si è iscritto all'evento`,
+            read: req.user._id,
+            isJoinMessage: true,
+        });
+        await newMessage.save();
+
+
         res.status(200).json(event);
     } catch (error) {
         res.status(404).json({ message: error.message });
@@ -114,7 +125,7 @@ const patchJoinEvent = async (req, res) => {
 }
 
 
-
+//Ritorna tutti gli eventi a cui l'utente è iscritto
 const getOnLoadEventCorrelatedToUser = async (req, res) => {
     try {
         const eventTerminated = await Event.find({ dateEnd: { $lte: new Date() } });
@@ -130,7 +141,20 @@ const getOnLoadEventCorrelatedToUser = async (req, res) => {
                 path: 'location',
                 select: '-_id cover'
             })
-        res.status(200).send(event);
+
+        const howChatNotRead = await Message.find({ id_room: { $in: event.map(event => event.id_room) }, read: { $ne: req.user._id }, sender: { $ne: req.user._id } })
+        if (howChatNotRead) {
+            const eventWithHowChatNotRead = event.map(event => {
+                const howChatNotReadForThisEvent = howChatNotRead.filter(message => message.id_room === event.id_room);
+                return {
+                    ...event.toObject(),
+                    howChatNotRead: howChatNotReadForThisEvent.length,
+                }
+            })
+            res.status(200).send(eventWithHowChatNotRead);
+        } else {
+            res.status(200).send(event);
+        }
     } catch (error) {
         res.status(404).json({ message: error.message });
     }

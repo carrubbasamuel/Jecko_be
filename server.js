@@ -6,10 +6,10 @@ const app = require('./app');
 const server = http.createServer(app);
 
 
-const { chatNamespace, eventRooms } = socket(server);
+const  chatNamespace  = socket(server);
 
-app.set('chatNamespace', chatNamespace); 
-app.set('eventRooms', eventRooms); 
+app.set('chatNamespace', chatNamespace);
+
 
 
 server.listen(3003, () => {

@@ -4,9 +4,10 @@ const event = express.Router();
 
 
 const conrollerEvent = require('../controllers/controllerEvent');
+const { eventValidation, validationMiddleware } = require('../middleware/middlewareExpressValidator');
 
 
-event.post('/create', conrollerEvent.createEvent)
+event.post('/create',eventValidation, validationMiddleware, conrollerEvent.createEvent)
 event.get('/locationEvent/:locationId', conrollerEvent.getEventByLocation)
 event.get('/onLoadEvent', conrollerEvent.getOnLoadEventCorrelatedToUser)
 event.delete('/delateEvent/:eventId', conrollerEvent.delateEvent)
