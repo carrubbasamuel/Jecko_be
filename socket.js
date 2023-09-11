@@ -57,7 +57,7 @@ const socketInit = (server) => {
             chatNamespace.to(userConnected[EventWhitPlayers.creator]).emit('refresh-player', data);
         });
         socket.on('newMessage', () => {
-            socket.broadcast.emit('refresh-message');
+            chatNamespace.emit('refresh-message');
         });
 
         socket.on('joinEventRoom', (room) => {
@@ -88,3 +88,4 @@ const socketInit = (server) => {
 
 
 module.exports = socketInit;
+

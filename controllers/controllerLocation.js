@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const SchemaLocation = require('../models/SchemaLocation');
-
+const Event = require('../models/SchemaEvent');
 
 
 
@@ -8,7 +8,15 @@ const SchemaLocation = require('../models/SchemaLocation');
 const locationByCity = (req, res) => {
     SchemaLocation.find({ city: req.query.city })
         .then((data) => {
-            res.status(200).json(data);
+            Event.find({ location: data }).then((event) => {
+                data.forEach((location) => {
+                    const eventCorrelated = event.filter((event) => event.location._id.toString() === location._id.toString());
+                    if (eventCorrelated.length > 0) {
+                        location.haveEvents = true;
+                    }
+                })
+                res.status(200).json(data);
+            })
         })
         .catch((err) => {
             console.error(err);
