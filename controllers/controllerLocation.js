@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const SchemaLocation = require('../models/SchemaLocation');
 const Event = require('../models/SchemaEvent');
 

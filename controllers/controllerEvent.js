@@ -19,9 +19,10 @@ const createEvent = async (req, res) => {
             const currentTime = new Date();
             if (overlappingEvent.dateStart <= currentTime) {
                 return res.status(403).json({ message: "Un evento è gia in corso in questa fascia oraria. Inserisci un'altra fascia oraria." });
-            } else {
+            } else{
                 return res.status(403).json({ message: "La data di inizio del nuovo evento collide con un evento esistente. Inserisci un'altra data di inizio." });
             }
+            
         }
 
         const event = new Event({
@@ -125,7 +126,7 @@ const patchJoinEvent = async (req, res) => {
 }
 
 
-//Ritorna tutti gli eventi a cui l'utente è iscritto
+//Ritorna tutti gli eventi a cui l'utente è iscritto e aggiunge un campo howChatNotRead che indica il numero di messaggi non letti nella room chat dell'evento
 const getOnLoadEventCorrelatedToUser = async (req, res) => {
     try {
         const eventTerminated = await Event.find({ dateEnd: { $lte: new Date() } });
