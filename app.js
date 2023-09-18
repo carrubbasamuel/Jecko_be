@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 
-mongoose.connect(process.env.MONGO_URL)
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
 const db = mongoose.connection;
 db.on("error", (error) => console.error(error));
 db.once("open", () => console.log("Connessione al DB avvenuta con successo!"));
