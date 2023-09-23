@@ -20,7 +20,7 @@ const signup = async (req, res) => {
       username: req.body.username,
       name: req.body.name,
       surname: req.body.surname,
-      phone: req.body.phone,
+      city: req.body.city,
       birthdate: req.body.birthdate,
       avatar: req?.file?.path,
       motto: req.body.motto,
@@ -58,13 +58,15 @@ const login = async (req, res) => {
 };
 
 
+
+
 const profile = async (req, res) => {
   try {
     const user = await SchemaUser.findOne({ _id: req.user._id })
-    .select('-_id username name surname birthdate avatar motto')
+      .select('-_id username name surname birthdate avatar  games createdGames motto city')
     if (!user) {
       return res.status(404).json({ message: 'Not found!' });
-    }  
+    }
     res.status(200).json(user);
   } catch (err) {
     console.error(err);

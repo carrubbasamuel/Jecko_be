@@ -11,7 +11,7 @@ const signupValidation = [
     check('username').notEmpty().withMessage('Inserisci un username').isLength({ min: 3 }).withMessage('Numero minimo di caratteri 3'),
     check('name').notEmpty().withMessage('Inserisci un nome'),
     check('surname').notEmpty().withMessage('Inserisci un cognome'),
-    check('phone').notEmpty().withMessage('Inserisci un numero di telefono'),
+    check('city').notEmpty().withMessage('Inserisci una città'),
     check('birthdate').notEmpty().withMessage('Inserisci una data di nascita'),
 ]
 

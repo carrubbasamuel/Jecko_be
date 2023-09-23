@@ -5,7 +5,7 @@ const { verifyToken } = require('../middleware/middlewareJWT');
 const location = express.Router();
 
 
-location.get('/location',verifyToken, locationController.locationByCity);
+location.get('/location',verifyToken, locationController.locationField);
 
 
 module.exports = location;

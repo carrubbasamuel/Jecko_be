@@ -1,5 +1,6 @@
 const Event = require('../models/SchemaEvent');
 const Message = require('../models/SchemaMessage');
+const User = require('../models/SchemaUser');
 const { v4: uuidv4 } = require('uuid');
 
 
@@ -19,10 +20,10 @@ const createEvent = async (req, res) => {
             const currentTime = new Date();
             if (overlappingEvent.dateStart <= currentTime) {
                 return res.status(403).json({ message: "Un evento è gia in corso in questa fascia oraria. Inserisci un'altra fascia oraria." });
-            } else{
+            } else {
                 return res.status(403).json({ message: "La data di inizio del nuovo evento collide con un evento esistente. Inserisci un'altra data di inizio." });
             }
-            
+
         }
 
         const event = new Event({
@@ -36,6 +37,10 @@ const createEvent = async (req, res) => {
             id_room: uuidv4(),
         });
         const newEvent = await event.save();
+
+        const user = await User.findById(req.user._id);
+        user.createdGames = user.createdGames + 1;
+        await user.save();
 
         //Crea un messaggio che notifica la creazione dell'evento il primo messaggio della room chat
         const newMessage = new Message({
@@ -109,6 +114,7 @@ const patchJoinEvent = async (req, res) => {
         event.players.push(req.user._id);
         await event.save();
 
+
         const newMessage = new Message({
             id_room: event.id_room,
             sender: req.user._id,
@@ -130,11 +136,14 @@ const patchJoinEvent = async (req, res) => {
 const getOnLoadEventCorrelatedToUser = async (req, res) => {
     try {
         const eventTerminated = await Event.find({ dateEnd: { $lte: new Date() } });
-        if (eventTerminated) {
-            eventTerminated.forEach(async (event) => {
-                await Event.findByIdAndDelete(event._id);
-                await Message.deleteMany({ id_room: event.id_room });
-            });
+
+        for (const event of eventTerminated) {
+            for (const playerId of event.players) {
+                await User.findByIdAndUpdate(playerId, { $inc: { games: 1 } });
+            }
+
+            await Event.findByIdAndDelete(event._id);
+            await Message.deleteMany({ id_room: event.id_room });
         }
 
         const event = await Event.find({ players: req.user._id })

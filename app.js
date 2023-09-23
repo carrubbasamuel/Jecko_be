@@ -21,11 +21,13 @@ db.on("error", (error) => console.error(error));
 db.once("open", () => console.log("Connessione al DB avvenuta con successo!"));
 
 
+const google = require('./oAuth/googleOauth');
+app.use('/', google);
+
 app.use('/', user);
 app.use('/', location);
 app.use('/', verifyToken, event);
 app.use('/', verifyToken, message);
-
 
 
 

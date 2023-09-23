@@ -4,8 +4,8 @@ const Event = require('../models/SchemaEvent');
 
 
 
-const locationByCity = (req, res) => {
-    SchemaLocation.find({ city: req.query.city })
+const locationField = (req, res) => {
+    SchemaLocation.find()
         .then((data) => {
             Event.find({ location: data }).then((event) => {
                 data.forEach((location) => {
@@ -25,5 +25,5 @@ const locationByCity = (req, res) => {
 
 
 module.exports = {
-    locationByCity,
+    locationField,
 };
