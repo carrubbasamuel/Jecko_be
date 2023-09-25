@@ -74,6 +74,20 @@ const profile = async (req, res) => {
   }
 };
 
+const usersProfile = async (req, res) => {
+  try {
+    const user = await SchemaUser.findOne({ _id: req.params.id })
+      .select('-_id username name surname birthdate avatar  games createdGames motto city')
+    if (!user) {
+      return res.status(404).json({ message: 'Not found!' });
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Errore interno' });
+  }
+}
+
 
 
 
@@ -81,4 +95,5 @@ module.exports = {
   signup,
   login,
   profile,
+  usersProfile,
 };

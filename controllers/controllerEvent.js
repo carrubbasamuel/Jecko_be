@@ -81,6 +81,7 @@ const getEventByLocation = async (req, res) => {
                 return {
                     ...event.toObject(),
                     isMine: req.user._id.toString() === event.creator._id.toString(),
+                    imPlayer: event.players.includes(req.user._id),
                 };
             });
 
