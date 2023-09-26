@@ -88,12 +88,56 @@ const usersProfile = async (req, res) => {
   }
 }
 
+const editUser = async (req, res) => {
+  try {
+    const userId = req.user._id; 
+
+    const updatedUser = await SchemaUser.findOneAndUpdate(
+      { _id: userId },
+      { $set: req.body },
+      { new: true } 
+    ).select('-_id username name surname birthdate avatar  games createdGames motto city')
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'Utente non trovato!' });
+    }
+
+    
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Errore interno' });
+  }
+}
 
 
+const editAvatar = async (req, res) => {
+  try {
+    const userId = req.user._id; 
+
+    const updatedUser = await SchemaUser.findOneAndUpdate(
+      { _id: userId },
+      { $set: { avatar: req.file.path } },
+      { new: true } 
+    ).select('-_id username name surname birthdate avatar  games createdGames motto city')
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'Utente non trovato!' });
+    }
+
+    
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Errore interno' });
+  }
+}
 
 module.exports = {
   signup,
   login,
   profile,
   usersProfile,
+  editUser,
+  editAvatar
 };
