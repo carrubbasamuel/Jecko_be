@@ -1,6 +1,8 @@
 const SchemaUser = require('../models/SchemaUser');
 const bcrypt = require('bcrypt');
 const { generateToken } = require('../middleware/middlewareJWT');
+const SchemaMessage = require('../models/SchemaMessage');
+const SchemaEvent = require('../models/SchemaEvent');
 
 
 
@@ -133,11 +135,28 @@ const editAvatar = async (req, res) => {
   }
 }
 
+const deleteUser = async (req, res) => {
+  try {
+    await SchemaMessage.deleteMany({ sender: req.user._id });
+    await SchemaEvent.deleteMany({ creator: req.user._id });
+    const user = await SchemaUser.deleteOne({ _id: req.user._id });
+    if (!user) {
+      return res.status(404).json({ message: 'Utente non trovato' });
+    }
+    res.status(200).json({ message: 'Utente cancellato' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Errore interno' });
+  }
+}
+
+
 module.exports = {
   signup,
   login,
   profile,
   usersProfile,
   editUser,
-  editAvatar
+  editAvatar,
+  deleteUser,
 };

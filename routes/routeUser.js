@@ -16,6 +16,7 @@ user.get('/profile', verifyToken, userController.profile);
 user.get('/profile/:id', verifyToken, userController.usersProfile);
 user.patch('/editUser', verifyToken, userController.editUser);
 user.patch('/editUser/avatar',verifyToken, formDataSingup.single('avatar'), userController.editAvatar);
+user.delete('/editUser/deleteUser', verifyToken, userController.deleteUser);
 
 
 
