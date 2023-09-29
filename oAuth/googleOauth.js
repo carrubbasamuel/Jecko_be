@@ -6,6 +6,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { generateToken } = require("../middleware/middlewareJWT");
 
 const express = require("express");
+const { welcomeEmail } = require("../middleware/middlewareNodemailer");
 const google = express();
 
 
@@ -65,6 +66,7 @@ google.get('/auth/google/callback',
                 });
                 await newUser.save();
                 const token = generateToken({_id: newUser._id, email: newUser.email})
+                welcomeEmail(newUser.email);
                 res.redirect(process.env.FRONTEND_URL + '/login/' + token);
             }else{
                 const token = generateToken({_id: user._id, email: user.email})
@@ -76,6 +78,7 @@ google.get('/auth/google/callback',
         }
     }
 );
+
 
 module.exports = google;
 

@@ -7,12 +7,14 @@ const user = require('./routes/routeUser');
 const location = require('./routes/routeLocation');
 const event = require('./routes/routeEvent');
 const message = require('./routes/routeMessage');
+const reset = require('./routes/routeResetPass');
 const { verifyToken } = require('./middleware/middlewareJWT');
 
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
 
 
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -23,6 +25,8 @@ db.once("open", () => console.log("Connessione al DB avvenuta con successo!"));
 
 const google = require('./oAuth/googleOauth');
 app.use('/', google);
+
+app.use('/', reset);
 
 app.use('/', user);
 app.use('/', location);
