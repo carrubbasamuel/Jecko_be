@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const { generateToken } = require('../middleware/middlewareJWT');
 const SchemaMessage = require('../models/SchemaMessage');
 const SchemaEvent = require('../models/SchemaEvent');
+const { welcomeEmail } = require("../middleware/middlewareNodemailer");
 
 
 
@@ -28,6 +29,7 @@ const signup = async (req, res) => {
       motto: req.body.motto,
     });
 
+    welcomeEmail(newUser.email);
     await newUser.save();
     res.status(201).json({ message: 'Utente creato' });
   } catch (err) {

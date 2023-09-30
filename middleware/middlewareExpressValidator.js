@@ -22,6 +22,9 @@ const eventValidation = [
     check('description').notEmpty().withMessage('Inserisci una descrizione'),
 ]
 
+const validateResetPass = [
+    check('password').notEmpty().withMessage('Inserisci una Password').isLength({ min: 6 }).withMessage('Numero minimo di caratteri 6'),
+]
 
 const validationMiddleware = (req, res, next) => {
     const errors = validationResult(req);
@@ -31,9 +34,12 @@ const validationMiddleware = (req, res, next) => {
     next();
 }
 
+
+
 module.exports = {
     loginValidation,
     signupValidation,
     eventValidation,
+    validateResetPass,
     validationMiddleware
 }

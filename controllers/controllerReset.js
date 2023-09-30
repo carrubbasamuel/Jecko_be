@@ -3,27 +3,39 @@ const { handleMapResetCode, handleCheckPin } = require('../middleware/middleware
 const SchemaUser = require('../models/SchemaUser')
 const bcrypt = require('bcrypt');
 
-const forgot = (req,res) =>{
-    const ValidEmail = SchemaUser.findOne({ email: req.body.email})
-    if(!ValidEmail){
-        return res.status(404).json({error: 'Email non valida'})
-    }else{
-         const code = passwordRestore(req.body.email);
-         handleMapResetCode(code)
-         res.status(200).json({email: req.body.email})
+const forgot = async (req,res) => {
+    try {
+        const ValidEmail = await SchemaUser.findOne({ email: req.body.email });
+        
+
+        if(ValidEmail){
+            const code = passwordRestore(req.body.email);
+            handleMapResetCode(code);
+            res.status(200).json({email: req.body.email});
+        } else {
+            res.status(404).json({error: 'Email non valida'});
+        }
+    } catch (error) {
+        res.status(500).json({error: 'Errore del server'});
     }
-  
 }
 
-const checkPin = (req,res) =>{
-    const pin = req.body.pin;
-    const verify = handleCheckPin(pin)
-    if(verify){
-        res.status(200).json({message: 'Pin corretto'})
-    }else{
-        res.status(404).json({error: 'Pin non valido'})
+
+const checkPin = (req, res) => {
+    try {
+        const pin = req.body.pin;
+        const verify = handleCheckPin(pin);
+
+        if (verify) {
+            res.status(200).json({ message: 'Pin corretto' });
+        } else {
+            res.status(404).json({ error: 'Pin non valido' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Errore del server' });
     }
 }
+
 
 const changePass = async (req, res) => {
     const email = req.body.email;

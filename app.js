@@ -27,7 +27,6 @@ const google = require('./oAuth/googleOauth');
 app.use('/', google);
 
 app.use('/', reset);
-
 app.use('/', user);
 app.use('/', location);
 app.use('/', verifyToken, event);
